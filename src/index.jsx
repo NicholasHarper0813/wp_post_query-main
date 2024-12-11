@@ -1,27 +1,22 @@
-/**
- * External dependencies
- */
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import shallowEqual from 'shallowequal';
-
-/**
- * Internal dependencies
- */
 import { isRequestingPostsForQuery, isRequestingPost } from './selectors';
 import { requestPosts, requestPost } from './state';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Component } from 'react';
 
 const debug = debugFactory( 'query:post' );
 
 class WPPostQuery extends Component {
-	componentWillMount() {
+	componentWillMount() 
+	{
 		this.request( this.props );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps ) 
+	{
 		if (
 			this.props.postSlug === nextProps.postSlug &&
 			shallowEqual( this.props.query, nextProps.query )
@@ -35,18 +30,21 @@ class WPPostQuery extends Component {
 	request( props ) {
 		const single = !! props.postSlug;
 
-		if ( ! single && ! props.requestingPosts ) {
+		if ( ! single && ! props.requestingPosts ) 
+		{
 			debug( `Request post list using query ${ props.query }` );
 			props.requestPosts( props.query );
 		}
 
-		if ( single && ! props.requestingPost ) {
+		if ( single && ! props.requestingPost ) 
+		{
 			debug( `Request single post ${ props.postSlug }` );
 			props.requestPost( props.postSlug, props.postType );
 		}
 	}
 
-	render() {
+	render() 
+	{
 		return null;
 	}
 }
@@ -66,7 +64,8 @@ WPPostQuery.defaultProps = {
 export default connect(
 	( state, ownProps ) => {
 		const { postSlug, query } = ownProps;
-		return {
+		return 
+		{
 			requestingPost: isRequestingPost( state, postSlug ),
 			requestingPosts: isRequestingPostsForQuery( state, query ),
 		};
