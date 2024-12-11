@@ -1,11 +1,8 @@
-/*global SiteSettings */
-/**
- * External dependencies
- */
+import API from 'wordpress-rest-api-oauth-1';
 import { combineReducers } from 'redux';
 import { keyBy, reduce } from 'lodash';
 import qs from 'qs';
-import API from 'wordpress-rest-api-oauth-1';
+
 const api = new API( {
 	url: SiteSettings.endpoint,
 } );
@@ -14,26 +11,18 @@ import {
 	getSerializedPostsQuery,
 } from './utils';
 
-/**
- * Post actions
- */
-export const POST_REQUEST = 'wordpress-redux/post/REQUEST';
 export const POST_REQUEST_SUCCESS = 'wordpress-redux/post/REQUEST_SUCCESS';
 export const POST_REQUEST_FAILURE = 'wordpress-redux/post/REQUEST_FAILURE';
-export const POSTS_RECEIVE = 'wordpress-redux/posts/RECEIVE';
-export const POSTS_REQUEST = 'wordpress-redux/posts/REQUEST';
 export const POSTS_REQUEST_SUCCESS = 'wordpress-redux/posts/REQUEST_SUCCESS';
 export const POSTS_REQUEST_FAILURE = 'wordpress-redux/posts/REQUEST_FAILURE';
+export const POSTS_RECEIVE = 'wordpress-redux/posts/RECEIVE';
+export const POSTS_REQUEST = 'wordpress-redux/posts/REQUEST';
+export const POST_REQUEST = 'wordpress-redux/post/REQUEST';
 
-/**
- * Tracks all known post objects, indexed by post global ID.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
+export function items( state = {}, action ) 
+{
+	switch ( action.type ) 
+	{
 		case POSTS_RECEIVE:
 			const posts = keyBy( action.posts, 'id' );
 			return Object.assign( {}, state, posts );
@@ -42,17 +31,10 @@ export function items( state = {}, action ) {
 	}
 }
 
-/**
- * Returns the updated post requests state after an action has been
- * dispatched. The state reflects a mapping of post ID to a
- * boolean reflecting whether a request for the post is in progress.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function requests( state = {}, action ) {
-	switch ( action.type ) {
+export function requests( state = {}, action ) 
+{
+	switch ( action.type ) 
+	{
 		case POST_REQUEST:
 		case POST_REQUEST_SUCCESS:
 		case POST_REQUEST_FAILURE:
@@ -62,17 +44,10 @@ export function requests( state = {}, action ) {
 	}
 }
 
-/**
- * Returns the updated post query requesting state after an action has been
- * dispatched. The state reflects a mapping of serialized query to whether a
- * network request is in-progress for that query.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function queryRequests( state = {}, action ) {
-	switch ( action.type ) {
+export function queryRequests( state = {}, action ) 
+{
+	switch ( action.type ) 
+	{
 		case POSTS_REQUEST:
 		case POSTS_REQUEST_SUCCESS:
 		case POSTS_REQUEST_FAILURE:
@@ -86,16 +61,10 @@ export function queryRequests( state = {}, action ) {
 	}
 }
 
-/**
- * Tracks the page length for a given query.
- * @todo Bring in the "without paged" util, to reduce duplication
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function totalPages( state = {}, action ) {
-	switch ( action.type ) {
+export function totalPages( state = {}, action )
+	{
+	switch ( action.type )
+		{
 		case POSTS_REQUEST_SUCCESS:
 			const serializedQuery = getSerializedPostsQuery( action.query );
 			return Object.assign( {}, state, {
@@ -106,17 +75,10 @@ export function totalPages( state = {}, action ) {
 	}
 }
 
-/**
- * Returns the updated post query state after an action has been dispatched.
- * The state reflects a mapping of serialized query key to an array of post
- * global IDs for the query, if a query response was successfully received.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function queries( state = {}, action ) {
-	switch ( action.type ) {
+export function queries( state = {}, action )
+	{
+	switch ( action.type ) 
+	{
 		case POSTS_REQUEST_SUCCESS:
 			const serializedQuery = getSerializedPostsQuery( action.query );
 			return Object.assign( {}, state, {
@@ -127,15 +89,10 @@ export function queries( state = {}, action ) {
 	}
 }
 
-/**
- * Tracks the slug->ID mapping for posts
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function slugs( state = {}, action ) {
-	switch ( action.type ) {
+export function slugs( state = {}, action ) 
+{
+	switch ( action.type ) 
+	{
 		case POST_REQUEST_SUCCESS:
 			return Object.assign( {}, state, {
 				[ action.postSlug ]: action.postId,
@@ -160,14 +117,11 @@ export default combineReducers( {
 	slugs,
 } );
 
-/**
- * Figures out the REST API URL for a given post type
- * @param  {string} postType the post type
- * @return {string}          A URL to make a REST request to
- */
-function getURLForType(postType) {
+function getURLForType(postType)
+	{
 	let url = '';
-	switch (postType) {
+	switch (postType)
+		{
 		case 'post':
 			url = '/wp/v2/posts';
 			break;
@@ -180,13 +134,8 @@ function getURLForType(postType) {
 	return url;
 }
 
-/**
- * Triggers a network request to fetch posts for the specified site and query.
- *
- * @param  {String}   query  Post query
- * @return {Function}        Action thunk
- */
-export function requestPosts( query = {} ) {
+export function requestPosts( query = {} )
+	{
 	return ( dispatch ) => {
 		const defaults = {
 			post_type: 'post'
@@ -198,9 +147,8 @@ export function requestPosts( query = {} ) {
 		} );
 
 		query._embed = true;
-
 		const url = getURLForType( query.post_type );
-
+		
 		api.get( url, query ).then( posts => {
 			dispatch( {
 				type: POSTS_RECEIVE,
@@ -225,14 +173,8 @@ export function requestPosts( query = {} ) {
 	};
 }
 
-/**
- * Triggers a network request to fetch a specific post from a site.
- *
- * @param  {string}   postSlug  Post slug
- * @param  {string}   postType  Post type
- * @return {Function}           Action thunk
- */
-export function requestPost( postSlug, postType = 'post' ) {
+export function requestPost( postSlug, postType = 'post' ) 
+{
 	return ( dispatch ) => {
 		dispatch( {
 			type: POST_REQUEST,
