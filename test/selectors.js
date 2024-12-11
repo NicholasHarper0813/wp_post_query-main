@@ -1,18 +1,10 @@
-/**
- * External dependencies
- */
 import { expect } from 'chai';
-import deepFreeze from 'deep-freeze';
 import { keyBy } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import * as selectors from '../src/selectors';
+import deepFreeze from 'deep-freeze';
 import posts from './fixtures/posts';
 
 const postsById = keyBy( posts, 'id' );
-
 const state = deepFreeze( {
 	posts: {
 		items: postsById,
@@ -73,6 +65,16 @@ describe( 'Post selectors', function() {
 		expect( selectors.getTotalPagesForQuery ).to.be.a( 'function' );
 	} );
 
+	describe( 'getPostIdFromSlug', function() {
+		it( 'Should get `false` if the post has not been requested yet', function() {
+			expect( selectors.getPostIdFromSlug( state, 'unrequested-post' ) ).to.be.false;
+		} );
+
+		it( 'Should get the post ID if this post is in our state', function() {
+			expect( selectors.getPostIdFromSlug( state, 'wordpress-query-component-tests' ) ).to.eql( 6 );
+		} );
+	} );
+
 	describe( 'isRequestingPost', function() {
 		it( 'Should get `false` if the post has not been requested yet', function() {
 			expect( selectors.isRequestingPost( state, 'unrequested-post' ) ).to.be.false;
@@ -87,23 +89,13 @@ describe( 'Post selectors', function() {
 		} );
 	} );
 
-	describe( 'getPostIdFromSlug', function() {
-		it( 'Should get `false` if the post has not been requested yet', function() {
-			expect( selectors.getPostIdFromSlug( state, 'unrequested-post' ) ).to.be.false;
+	describe( 'getTotalPagesForQuery', function() {
+		it( 'Should get a default number (1) of pages available if the query has not been requested yet', function() {
+			expect( selectors.getTotalPagesForQuery( state, { paged: 4 } ) ).to.eql( 1 );
 		} );
 
-		it( 'Should get the post ID if this post is in our state', function() {
-			expect( selectors.getPostIdFromSlug( state, 'wordpress-query-component-tests' ) ).to.eql( 6 );
-		} );
-	} );
-
-	describe( 'getPost', function() {
-		it( 'Should get `undefined` if the post has not been requested yet', function() {
-			expect( selectors.getPost( state, 9 ) ).to.be.undefined;
-		} );
-
-		it( 'Should get the post object if this post is in our state', function() {
-			expect( selectors.getPost( state, 6 ) ).to.eql( postsById[ 6 ] );
+		it( 'Should get the number of pages (pagination) available for a query', function() {
+			expect( selectors.getTotalPagesForQuery( state, { paged: 1 } ) ).to.eql( 3 );
 		} );
 	} );
 
@@ -121,6 +113,16 @@ describe( 'Post selectors', function() {
 		} );
 	} );
 
+	describe( 'getPost', function() {
+		it( 'Should get `undefined` if the post has not been requested yet', function() {
+			expect( selectors.getPost( state, 9 ) ).to.be.undefined;
+		} );
+
+		it( 'Should get the post object if this post is in our state', function() {
+			expect( selectors.getPost( state, 6 ) ).to.eql( postsById[ 6 ] );
+		} );
+	} );
+
 	describe( 'getPostsForQuery', function() {
 		it( 'Should get null if the post query has not been requested yet', function() {
 			expect( selectors.getPostsForQuery( state, { paged: 4 } ) ).to.be.null;
@@ -132,16 +134,6 @@ describe( 'Post selectors', function() {
 				postsById[ 5 ]
 			];
 			expect( selectors.getPostsForQuery( state, { paged: 1 } ) ).to.eql( postList );
-		} );
-	} );
-
-	describe( 'getTotalPagesForQuery', function() {
-		it( 'Should get a default number (1) of pages available if the query has not been requested yet', function() {
-			expect( selectors.getTotalPagesForQuery( state, { paged: 4 } ) ).to.eql( 1 );
-		} );
-
-		it( 'Should get the number of pages (pagination) available for a query', function() {
-			expect( selectors.getTotalPagesForQuery( state, { paged: 1 } ) ).to.eql( 3 );
 		} );
 	} );
 } );
