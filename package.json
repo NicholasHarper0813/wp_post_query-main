@@ -1,0 +1,60 @@
+{
+  "name": "react-wp-post-query",
+  "version": "1.2.4",
+  "description": "A component for fetching WordPress custom post data from the REST API.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomjn/react-wp-post-query"
+  },
+  "engines": {
+    "node": ">=8.9.1",
+    "npm": ">=5.5.1"
+  },
+  "keywords": [
+    "react",
+    "react-component",
+    "wordpress",
+    "wpapi"
+  ],
+  "license": "GPL-2.0+",
+  "devDependencies": {
+    "babel-cli": "*",
+    "babel-core": "^6.17.0",
+    "babel-eslint": "^8.0.2",
+    "babel-plugin-lodash": "^3.2.9",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.18.0",
+    "chai": "^4.1.2",
+    "deep-freeze": "0.0.1",
+    "eslint": "^4.11.0",
+    "eslint-config-wpcalypso": "^1.2.0",
+    "eslint-plugin-wpcalypso": "^4.0.1",
+    "mocha": "^4.0.1",
+    "sinon": "^4.1.2"
+  },
+  "dependencies": {
+    "debug": "^3.1.0",
+    "lodash": "^4.17.2",
+    "qs": "^6.3.0",
+    "react": "^16.1.1",
+    "react-redux": "^5.1.0",
+    "redux": "^3.7.2",
+    "shallowequal": "^1.0.2",
+    "wordpress-rest-api-oauth-1": "^1.0.8"
+  },
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "watch": "babel src --out-dir lib --watch",
+    "lint": "eslint src --ext=js,jsx",
+    "test": "mocha  --require ./mocha-setup",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A lib",
+    "postversion": "git push && git push --tags"
+  }
+}
